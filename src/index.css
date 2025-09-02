@@ -1,2 +1,20 @@
 @import "tailwindcss";
 
+@theme{
+    --color-white-100: #fafbfc;
+    --color-primary-blue: #1d2125;
+    --color-semi-gray: #c3dfff;
+    --color-semi-gray-200: #414448;
+}
+
+html{
+    height: 100vh;
+    height: 100dvh;
+}
+
+body{
+    height: 100%;
+}
+#root {
+    height: 100%;
+}

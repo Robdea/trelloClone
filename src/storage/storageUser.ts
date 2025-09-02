@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type {User} from "../lib/user.type"
-import { register, signInUser } from "../api/services/userServices";
+import { userService } from "../api/services/userServices";
 
 interface UserProps {
     userData: User | null,
@@ -17,7 +17,7 @@ export const useUser = create<UserProps>((set) =>({
     registerUser: async (data) =>{
        set({loading: true, error: null});
        try {
-            await register(data);
+            await userService.registerUser(data);
             set({loading: false});
 
        } catch (err: unknown) {
@@ -31,7 +31,8 @@ export const useUser = create<UserProps>((set) =>({
     signInUser: async (data) => {
       set({loading: true, error: null});
        try {
-            const userSignIn = await signInUser(data);
+            const userSignIn = await userService.signInUser(data);
+
             set({userData: userSignIn, loading: false});
        } catch (err: unknown) {
             let errorMessage = "An error occurred";

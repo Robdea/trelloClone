@@ -1,58 +1,6 @@
-import { supabase } from "../clients/supabaseClient"
+import * as userFunctionApi from "./ownApi/boardsServices.own";
+import * as userFunctionSupabase from "./supabase/boardsServices.supabase";
 
-const TABLE = "boards"
+const backend = import.meta.env.VITE_BACKEND || "supabase";
 
-async function createBoard(userId:string, name: string ) {
-    const {data, error} = await supabase.from(TABLE)
-    .insert([
-        {owner_id: userId, name:name }
-    ])
-    .select()
-    if(error){
-        console.error(error);
-        return null
-    }
-    console.log("Se ha creado el tablero", data);
-    return data[0]
-}
-
-async function getAllBoardByUser(userId: string) {
-    const {data, error} = await supabase
-    .from(TABLE)
-    .select("*")
-    .eq("owner_id", userId)
-    if (error) {
-        console.error(error);
-        return
-    }
-    console.log("Dato obtenidos", data);
-    return data
-}
-
-async function updateName(newName: string, id: string) {
-    const {data, error} = await supabase
-    .from(TABLE)
-    .update([
-        {name: newName}
-    ])
-    .eq("id", id)
-    .select()
-    if(error){
-        console.error(error);
-        return null
-    }
-    console.log("Se actualizo", data);
-    return data[0]
-}
-
-async function deleteBoard(id:string) {
-    const {data, error} = await supabase
-    .from(TABLE)
-    .delete()
-    .eq("id", id)
-
-    if(error) console.error(error);
-    console.log("Se ha eliminado el tablero xd", data);
-}
-
-export{createBoard, updateName, deleteBoard, getAllBoardByUser}
+export const boardServices = backend === "supabase" ? userFunctionSupabase : userFunctionApi;

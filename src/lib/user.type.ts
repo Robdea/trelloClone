@@ -7,6 +7,12 @@ export interface Welcome {
     user:          User;
 }
 
+export interface UserData{
+    username: string;
+    id: number;
+    email: string;
+}
+
 export interface User {
     id:                 string;
     aud:                string;
@@ -17,10 +23,12 @@ export interface User {
     last_sign_in_at?:    Date;
     app_metadata?:       AppMetadata;
     user_metadata?:      Data;
+    user: UserData;
     identities?:         Identity[];
     created_at?:         Date;
     updated_at?:         Date;
     is_anonymous?:       boolean;
+    access_token?:      string;
 }
 
 export interface AppMetadata {

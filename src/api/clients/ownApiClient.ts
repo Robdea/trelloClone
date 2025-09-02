@@ -1,32 +1,28 @@
 import axios from "axios";
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_OWN_API
-})
+export const api = axios.create({
+    baseURL: import.meta.env.VITE_OWN_API,
+    withCredentials: true
+});
 
-export default{
-    registerUser: async (user: {email: string, password: string, username: string})  => {
-        const {email, password, username} = user
-        const {data} = await api.post("/users",{
-            email, 
-            password,
-            username
-        })
-        return data;
-    },
-    signInUser: async (user: {email: string, password: string}) => {
-        const {email, password} = user
-        const formData = new URLSearchParams();
-        formData.append("username", email);
-        formData.append("password", password);
+api.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    const originalRequest = err.config;
 
-        const {data} = await api.post("/auth/login", formData, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        })
-        console.log("Respuesta", data);
-        return data
+    // Si el error fue 401 y no hemos intentado refrescar aún
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        // Llamar al refresh
+        await api.post("/auth/refresh");
+        // Reintentar la petición original
+        return api(originalRequest);
+      } catch (refreshErr) {
+        // Si falla el refresh → redirigir a login
+        window.location.href = "/login";
+      }
     }
-}
-
+    return Promise.reject(err);
+  }
+);
